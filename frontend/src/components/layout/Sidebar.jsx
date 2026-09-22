@@ -22,7 +22,7 @@ function Sidebar({ activePage, isSidebarOpen, onNavigate }) {
         </div>
 
         {/* Navigation */}
-        <nav className="px-5 space-y-5 pt-7">
+        <nav className="px-5 space-y-5 pt-7 [&>button]:cursor-pointer">
           <button
             aria-current={activePage === "dashboard" ? "page" : undefined}
             className={`w-full flex items-center gap-2 text-left text-lg hover:text-gray-200 ${activePage === "dashboard" ? "font-semibold" : ""}`}

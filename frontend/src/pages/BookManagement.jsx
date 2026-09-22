@@ -2,8 +2,18 @@ import { useMemo, useState } from "react";
 
 const books = [
   { id: "B100", title: "Harry Potter", author: "James Watt", available: 5 },
-  { id: "B101", title: "The Great Gatsby", author: "F. Scott Fitzgerald", available: 3 },
-  { id: "B102", title: "Pride and Prejudice", author: "Jane Austen", available: 0 },
+  {
+    id: "B101",
+    title: "The Great Gatsby",
+    author: "F. Scott Fitzgerald",
+    available: 3,
+  },
+  {
+    id: "B102",
+    title: "Pride and Prejudice",
+    author: "Jane Austen",
+    available: 0,
+  },
 ];
 
 function BookManagement() {
@@ -25,12 +35,23 @@ function BookManagement() {
         <h1 className="bg-emerald-500 px-3 py-1 text-base font-semibold text-white">
           Book Management
         </h1>
-        <button className="text-sm font-semibold hover:text-emerald-700" type="button">
-          Add Book
-        </button>
+        <div className="flex items-center gap-10 whitespace-nowrap">
+          <button
+            className="cursor-pointer text-sm font-semibold hover:text-emerald-700"
+            type="button"
+          >
+            ADD BOOK
+          </button>
+          <button
+            className="cursor-pointer text-sm font-semibold hover:text-emerald-700"
+            type="button"
+          >
+            BORROWED BOOKS
+          </button>
+        </div>
       </div>
 
-      <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="mb-7 flex flex-col gap 3 sm:flex-row sm:items-center">
         <label className="relative block w-full max-w-sm">
           <span className="sr-only">Search books</span>
           <input
@@ -40,7 +61,13 @@ function BookManagement() {
             type="search"
             value={query}
           />
-          <span aria-hidden="true" className="absolute bottom-1 right-1 text-lg text-blue-500">⌕</span>
+
+          <span
+            aria-hidden="true"
+            className="absolute bottom-1 right-1 text-lg text-blue-500"
+          >
+            ⌕
+          </span>
         </label>
 
         <label>
@@ -76,10 +103,16 @@ function BookManagement() {
                 <td className="px-5 py-3">{book.author}</td>
                 <td className="px-5 py-3 text-center">{book.available}</td>
                 <td className="px-5 py-3">
-                  <div className="flex justify-center gap-4">
-                    <button aria-label={`View ${book.title}`} type="button">View</button>
-                    <button aria-label={`Edit ${book.title}`} type="button">Edit</button>
-                    <button aria-label={`Delete ${book.title}`} type="button">Delete</button>
+                  <div className="flex justify-center gap-4 [&>button]:cursor-pointer">
+                    <button aria-label={`View ${book.title}`} type="button">
+                      View
+                    </button>
+                    <button aria-label={`Edit ${book.title}`} type="button">
+                      Edit
+                    </button>
+                    <button aria-label={`Delete ${book.title}`} type="button">
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -89,7 +122,9 @@ function BookManagement() {
       </div>
 
       {filteredBooks.length === 0 && (
-        <p className="py-6 text-center text-sm text-gray-500">No books found.</p>
+        <p className="py-6 text-center text-sm text-gray-500">
+          No books found.
+        </p>
       )}
     </section>
   );

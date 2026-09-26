@@ -1,33 +1,55 @@
-import { useMemo, useState } from "react";
-
-const books = [
-  { id: "B100", title: "Harry Potter", author: "James Watt", available: 5 },
-  {
-    id: "B101",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    available: 3,
-  },
-  {
-    id: "B102",
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    available: 0,
-  },
-];
+import { useEffect, useMemo, useState } from "react";
 
 function BookManagement() {
+  //1. State declarations
+  const [books, setBooks] = useState([]);
   const [query, setQuery] = useState("");
   const [filterBy, setFilterBy] = useState("title");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  //2. Use to Fetch Books from backend
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadBooks() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/books", {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Could not load books (${response.status}).`);
+        }
+
+        const data = await response.json();
+        setBooks(data);
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          setError(err.message || "Could not connect to the server.");
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    }
+    loadBooks();
+    return () => controller.abort();
+  }, []);
+
+  //3. Use to Filter book's searching
   const filteredBooks = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
+
     if (!normalizedQuery) return books;
 
     return books.filter((book) =>
-      book[filterBy].toLowerCase().includes(normalizedQuery),
+      String(book[filterBy] ?? "")
+        .toLowerCase()
+        .includes(normalizedQuery),
     );
-  }, [filterBy, query]);
+  }, [books, filterBy, query]);
 
   return (
     <section className="px-4 pb-8 pt-3 sm:px-5">
@@ -51,7 +73,7 @@ function BookManagement() {
         </div>
       </div>
 
-      <div className="mb-7 flex flex-col gap 3 sm:flex-row sm:items-center">
+      <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-center">
         <label className="relative block w-full max-w-sm">
           <span className="sr-only">Search books</span>
           <input
@@ -84,6 +106,12 @@ function BookManagement() {
         </label>
       </div>
 
+{loading && (
+  <p className="py-6 text-center">Loading Books...</p>
+)}
+{error && (
+  <p className="py-6 text-center text-red-600">{error}</p>
+)}
       <div className="overflow-x-auto">
         <table className="w-full min-w-175 text-left text-sm">
           <thead className="bg-emerald-500 text-white">
@@ -121,7 +149,7 @@ function BookManagement() {
         </table>
       </div>
 
-      {filteredBooks.length === 0 && (
+      {!loading && !error && filteredBooks.length === 0 && (
         <p className="py-6 text-center text-sm text-gray-500">
           No books found.
         </p>

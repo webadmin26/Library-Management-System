@@ -8,3 +8,8 @@ node_modules/
 #Build files
 dist/
 build/
+
+backend/.env
+backend/.venv/
+__pycache__/
+*.pyc

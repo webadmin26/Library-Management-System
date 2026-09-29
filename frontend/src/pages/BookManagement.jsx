@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import BookDetails from "../modals/BookManagement/BookDetails";
+
 function BookManagement() {
   //1. State declarations
   const [books, setBooks] = useState([]);
@@ -7,6 +9,7 @@ function BookManagement() {
   const [filterBy, setFilterBy] = useState("title");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedBook, setSelectedBook] = useState(null);
 
   //2. Use to Fetch Books from backend
   useEffect(() => {
@@ -24,9 +27,9 @@ function BookManagement() {
 
         const data = await response.json();
         setBooks(data);
-      } catch (err) {
+      } catch {
         if (!controller.signal.aborted) {
-          setError(err.message || "Could not connect to the server.");
+          setError("Could not connect to the server.");
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -106,12 +109,6 @@ function BookManagement() {
         </label>
       </div>
 
-{loading && (
-  <p className="py-6 text-center">Loading Books...</p>
-)}
-{error && (
-  <p className="py-6 text-center text-red-600">{error}</p>
-)}
       <div className="overflow-x-auto">
         <table className="w-full min-w-175 text-left text-sm">
           <thead className="bg-emerald-500 text-white">
@@ -132,7 +129,10 @@ function BookManagement() {
                 <td className="px-5 py-3 text-center">{book.available}</td>
                 <td className="px-5 py-3">
                   <div className="flex justify-center gap-4 [&>button]:cursor-pointer">
-                    <button aria-label={`View ${book.title}`} type="button">
+                    <button aria-label={`View ${book.title}`}
+                     type="button"
+                     onClick={() => setSelectedBook(book)}
+                     >
                       View
                     </button>
                     <button aria-label={`Edit ${book.title}`} type="button">
@@ -147,6 +147,8 @@ function BookManagement() {
             ))}
           </tbody>
         </table>
+        {loading && <p className="py-6 text-center">Loading Books...</p>}
+        {error && <p className="py-6 text-center text-red-600">{error}</p>}
       </div>
 
       {!loading && !error && filteredBooks.length === 0 && (
@@ -154,6 +156,11 @@ function BookManagement() {
           No books found.
         </p>
       )}
+
+      <BookDetails
+  book={selectedBook}
+  onClose={() => setSelectedBook(null)}
+/>
     </section>
   );
 }

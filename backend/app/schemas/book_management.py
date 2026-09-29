@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-class BookRead(BaseModel):
+class BookResponse(BaseModel):
     id: int
     title: str
     author: str

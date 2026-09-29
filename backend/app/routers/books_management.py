@@ -3,13 +3,13 @@ from sqlalchemy import and_, func, select
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..models import Book, BookCopy
-from ..schemas import BookRead
+from ..models.book_management import Book, BookCopy
+from ..schemas.book_management import BookResponse
 
 router = APIRouter(prefix="/books", tags=["books"])
 
 
-@router.get("", response_model=list[BookRead])
+@router.get("", response_model=list[BookResponse])
 def list_books(db: Session = Depends(get_db)):
     statement = (
         select(
